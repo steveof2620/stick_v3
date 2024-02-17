@@ -1,7 +1,7 @@
 /*
 Hardware:
   Circuit Playground Express Bluefruit
-    (uses internal accelerometer, microphone, buttons A & B and slide switch and onboard neoPixels)
+    (uses internal accelerometer, microphone, buttons A & B, slide switch and onboard neoPixels)
   1 x Potentiometer 
   1 x 30 LED WS2812B strip
 */
@@ -17,6 +17,9 @@ Hardware:
 //Buttons A & B on the CPX
 #define BUTTON_A 4
 #define BUTTON_B 5
+
+//The number of menu items to cycle through
+#define NUM_MENU_ITEMS 6
 
 //The total number of LEDs being used
 #define NUM_LEDS 30
@@ -100,7 +103,7 @@ int sparkTest = 0;               // sparkTest: variable used in the "sparkle" LE
 //====================================================================================================================
 void setup(){
     
-    //Serial.begin(9600);
+    Serial.begin(9600);
     CircuitPlayground.begin(); //for the built in accelerometer, onboard LEDs etc  
     delay(2000);               //Delay for two seconds to power the LEDS before starting the data signal
     FastLED.addLeds<WS2812B, LED_PIN, GRB>(leds, NUM_LEDS);    //initialise the LED strip
@@ -129,40 +132,40 @@ void loop(){
   }
   else {
     mode = selectMode();  
-    //Serial.println(mode);
+    Serial.println(mode);
     switch(mode){
       case 0:                                               
-        //Serial.println("Mode one selected");
+        // Serial.println("Mode one selected");
         demoReel();
         break;
 
       case 1:                                               
-        //Serial.println("Mode one selected");
+        // Serial.println("Mode two selected");
         rainbow_display();
         break;
 
-      case 2:                                               
-        //Serial.println("Mode one selected");
-        pot_bpm();
+      case 2: // error here                                              
+        Serial.println("Mode three, calling BPM");
+        bpm();
         break;      
       
       case 3:
-        //Serial.println("Mode two selected");
+        // Serial.println("Mode four selected");
         fire_effect();
         break;
       
       case 4:
-        //Serial.println("Mode three selected");
+        // Serial.println("Mode five selected");
         chaser();
         break;
 
       case 5:                                               
-        //Serial.println("Mode four selected");
+        // Serial.println("Mode six selected");
         comet_effect();
         break;
 
       case 6:
-        //Serial.println("Mode five selected");
+        // Serial.println("Mode seven selected");
         fire_starter();
         break;
     }
@@ -186,7 +189,13 @@ int selectMode (){
     if (digitalRead(BUTTON_A)){
     mode++;
     CircuitPlayground.setPixelColor(mode, 0, 255, 0);
-    if (mode > 4){
+/*    
+    Serial.print("led ");
+    Serial.print(mode);
+    Serial.println(" activated."); 
+*/
+
+    if (mode > NUM_MENU_ITEMS){
       mode = 0;
       CircuitPlayground.clearPixels();
       CircuitPlayground.setPixelColor(mode, 0, 255, 0);
@@ -215,6 +224,10 @@ int selectMode (){
 void boot_sequence(){
   lightning();
   flicker();
+  
+  // Setting the first pixel to indicate mode one is running
+  // zero is the first LED
+  CircuitPlayground.setPixelColor(0, 0, 255, 0);
 }
 
 //====================================================================================================================
@@ -287,7 +300,6 @@ void flicker() {
 // demoReel () : Runs through a sequence of rainbow, rainbowWithGlitter, confetti, sinelon, 
 //               juggle, bpm.
 //====================================================================================================================
-
 typedef void (*SimplePatternList[])(); // List of patterns to cycle through.  Each is defined as a separate function below
 SimplePatternList gPatterns = { rainbow, rainbowWithGlitter, confetti, sinelon, juggle, bpm };
 
@@ -376,6 +388,7 @@ void bpm()
     leds[i] = ColorFromPalette(palette, gHue+(i*2), beat-gHue+(i*10));
   }
 }
+
 //===================================================================================================================
 // juggle() : called by demoreel, eight colored dots, weaving in and out of sync with each other
 //===================================================================================================================
@@ -425,7 +438,15 @@ void rainbow_display(){
 //===================================================================================================================
 void pot_bpm()
 {
-  uint8_t BeatsPerMinute = map(analogRead(POT_PIN), 0, 1023, 62, 120);
+  
+  uint8_t BeatsPerMinute = 62;
+  /*
+  BeatsPerMinute = map(analogRead(POT_PIN), 0, 945, 62, 120);
+  Serial.print("Pot Value ");
+  Serial.println (analogRead(POT_PIN));
+  Serial.print("Pot BPM Value ");
+  Serial.println (BeatsPerMinute);
+  */
   CRGBPalette16 palette = PartyColors_p;
   uint8_t beat = beatsin8( BeatsPerMinute, 64, 255);
   for( int i = 0; i < NUM_LEDS; i++) { //9948
