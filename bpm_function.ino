@@ -31,10 +31,10 @@ void setup() {
 
 void loop()
 {
-  bpm();
+  pot_bpm();
 }
 
-void bpm()
+void pot_bpm()
 {
   
   uint8_t gHue = 0; // rotating "base color"
