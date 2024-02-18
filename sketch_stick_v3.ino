@@ -196,11 +196,12 @@ int selectMode (){
     if (digitalRead(BUTTON_A)){
     mode++;
     CircuitPlayground.setPixelColor(mode, 0, 255, 0);
-/*    
+    
+    /*    
     Serial.print("led ");
     Serial.print(mode);
     Serial.println(" activated."); 
-*/
+    */
 
     if (mode > NUM_MENU_ITEMS){
       mode = 0;
@@ -447,7 +448,6 @@ void rainbow_display(){
 // pot_bpm() : Called from the main routine. Similar to the one in demoreel but 
 //             Beats-Per-Minute (BPM) set via the potentiometer.
 //===================================================================================================================
-
 void pot_bpm()
 {
   
