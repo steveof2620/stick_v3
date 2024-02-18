@@ -102,6 +102,9 @@ byte ledh[NUM_LEDS];
 //used by sparkle (called via firestarter)
 int sparkTest = 0;               // sparkTest: variable used in the "sparkle" LED animation sequence
 
+// used by pot_bpm
+int int_palletCount = 0; // currently active pallet
+
 //====================================================================================================================
 // setup() : Start up and housekeeping. Display the boot sequence animation
 //====================================================================================================================
@@ -148,9 +151,9 @@ void loop(){
         rainbow_display();
         break;
 
-      case 2: // error here                                              
-        Serial.println("Mode three, calling BPM");
-        bpm();
+      case 2:                                    
+        // Serial.println("Mode three, calling BPM");
+        pot_bpm();
         break;      
       
       case 3:
@@ -444,23 +447,105 @@ void rainbow_display(){
 // pot_bpm() : Called from the main routine. Similar to the one in demoreel but 
 //             Beats-Per-Minute (BPM) set via the potentiometer.
 //===================================================================================================================
+
 void pot_bpm()
 {
   
-  uint8_t BeatsPerMinute = 62;
+  uint8_t gHue = 0; // rotating "base color"
+  
+  // For the colour palette rotation.
+  int int_palletNum = 7; // the number of available pallets, starting at 0
+  int int_palletDuration = 5; // how long a pallet will run before changing
+
+
+  // colored stripes pulsing at a defined Beats-Per-Minute (BPM)
+  int int_bpm = 80;
+  
+  // Obatin the bpm setting from the potentiometer
+  int_bpm = map(analogRead(POT_PIN), 0, 1023, 62, 120); 
+  uint8_t BeatsPerMinute = int_bpm;
+  
+  //assign the colour palette
+  CRGBPalette16 selectedPallet;
+  
   /*
-  BeatsPerMinute = map(analogRead(POT_PIN), 0, 945, 62, 120);
-  Serial.print("Pot Value ");
-  Serial.println (analogRead(POT_PIN));
-  Serial.print("Pot BPM Value ");
-  Serial.println (BeatsPerMinute);
+  Available preset color pallets for selection:
+
+    LavaColors_p              - orange, red, black and yellow
+    CloudColors_p             - blue and white
+    OceanColors_p             - blue, cyan and white
+    ForestColors_p            - greens and blues
+    RainbowColors_p           - standard rainbow animation
+    RainbowStripeColors_p     - single colour, black space, next colour and so forth
+    PartyColors_p             - red, yellow, orange, purple and blue
+    HeatColors_p              - red, orange, yellow and white
+
   */
-  CRGBPalette16 palette = PartyColors_p;
+  
+  // Obtain the pallet during from the potentiometer
+  int_palletDuration = map(analogRead(POT_PIN), 0, 1023, 10, 2); 
+  
+  // Assign the selected colourPalette
+  EVERY_N_SECONDS(int_palletDuration){
+    switch (int_palletCount){
+      case 0:
+        selectedPallet = LavaColors_p;
+        Serial.println("Selected Pallet: LavaColors");
+        break;
+      case 1:
+        selectedPallet = CloudColors_p;
+        Serial.println("Selected Pallet: CloudColors");
+        break;           
+      case 2:
+        selectedPallet = OceanColors_p;
+        Serial.println("Selected Pallet: OceanColors");
+        break;
+      case 3:
+        selectedPallet = ForestColors_p;
+        Serial.println("Selected Pallet: ForestColors");
+        break;
+      case 4:
+        selectedPallet = RainbowColors_p;
+        Serial.println("Selected Pallet: RainbowColors");
+        break;
+      case 5:
+        selectedPallet = RainbowStripeColors_p;
+        Serial.println("Selected Pallet: RainbowStripeColors");
+        break;
+      case 6:
+        selectedPallet = PartyColors_p;
+        Serial.println("Selected Pallet: PartyColors");
+        break;  
+      case 7:
+        selectedPallet = HeatColors_p;
+        Serial.println("Selected Pallet: HeatColors");
+        break;
+    }
+
+    // Incriment the index. If it exceeds the number of assigned palettes
+    // then reset the counter back to zero.
+    int_palletCount++;
+    // Serial.print("Pallet numb: ");
+    // Serial.println(int_palletNum);
+    if (int_palletCount > int_palletNum){
+      int_palletCount = 0;
+    }
+  }
+
+  // activate the palette 
   uint8_t beat = beatsin8( BeatsPerMinute, 64, 255);
   for( int i = 0; i < NUM_LEDS; i++) { //9948
-    leds[i] = ColorFromPalette(palette, gHue+(i*2), beat-gHue+(i*10));
+    leds[i] = ColorFromPalette(selectedPallet, gHue+(i*2), beat-gHue+(i*10));
   }
+  
+  // send the 'leds' array out to the actual LED strip
+  FastLED.show();  
+  // insert a delay to keep the framerate modest
+  FastLED.delay(1000/FRAMES_PER_SECOND); 
+  
+  EVERY_N_MILLISECONDS( 20 ) { gHue++; } // slowly cycle the "base color" through the rainbow
 }
+
 
 //====================================================================================================================
 // void display_rainbow () : The beginning of the sequence. A rainbow is displayed with a glitter effect and the the 
