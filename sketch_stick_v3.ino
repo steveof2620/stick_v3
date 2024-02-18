@@ -2,8 +2,8 @@
 Hardware:
   Circuit Playground Express Bluefruit
     (uses internal accelerometer, microphone, buttons A & B, slide switch and onboard neoPixels)
-  1 x Potentiometer 
-  1 x 30 LED WS2812B strip
+  1 x Potentiometer (Pin A1, Ground, 3.3v)
+  1 x 30 LED WS2812B strip (Pin A3 (17), Ground, VOUT)
 */
 
 // libraries used
