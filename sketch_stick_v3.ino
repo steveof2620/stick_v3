@@ -14,25 +14,25 @@ Hardware:
 // Global Definitions
 //====================================================================================================================
 
-//Buttons A & B on the CPX
+// Buttons A & B on the CPX
 #define BUTTON_A 4
 #define BUTTON_B 5
 
-//The number of menu items to cycle through
+// The number of menu items to cycle through (starting as 0)
 #define NUM_MENU_ITEMS 6
 
-//The total number of LEDs being used
+// The total number of LEDs being used
 #define NUM_LEDS 30
 
-//NeoPixel strip connected to A3 (Seems to only work when set to 17)
+// NeoPixel strip connected to A3 (Seems to only work when set to 17)
 #define LED_PIN 17
 
-//Definitations for the VU_meter() function
+// Definitations for the VU_meter() function
 #define SAMPLE_WINDOW   10  // Sample window for average level
 #define PEAK_HANG       24  // Time of pause before peak dot falls
 #define PEAK_FALL        4  // Rate of falling peak dot 
 
-//Definitations for the fire_effect() function
+// Definitations for the fire_effect() function
 #define FRAMES_PER_SECOND 120
 #define COOLING  55        // COOLING: How much does the air cool as it rises?
                            //Less cooling = taller flames.  More cooling = shorter flames.
@@ -41,17 +41,21 @@ Hardware:
                            // Higher chance = more roaring fire.  Lower chance = more flickery fire.
                            // Default 120, suggested range 50-200.
 
-//For the potentiometer
+// For the potentiometer
 #define POT_PIN  A1        //Otherwise known as pin 6
 
-//Initialise the LED array.
+// Initialise the LED array.
 CRGB leds[NUM_LEDS];
 
 //====================================================================================================================
 // Global Variables
 //====================================================================================================================
 
-byte intensity = 150;       // intensity: default brightness
+// byte intensity = 150;       // intensity: default brightness
+// changing intensity to brightness to better reflect its purpose
+uint8_t brightness = 120;
+
+
 float X, Y, Z;              // For the adafruit accelerometer
 
 // variables for the selection function:
@@ -77,21 +81,21 @@ byte dotHangCount = 0;    //Frame counter for holding peak dot
 bool gReverseDirection = false;
 CRGBPalette16 gPal;
 
-//used by adjustSpeed (called via commetEffect & firestarter)
+// used by adjustSpeed (called via commetEffect & firestarter)
 int LEDAccel=0;             // stores the acceleration value of the LED animation sequence (speed up or slow down)
 
-//used by setDelay (called via commetEffect & firestarter) 
+// used by setDelay (called via commetEffect & firestarter) 
 int maxLEDSpeed = 50;       // maxLEDSpeed: identifies the maximum speed of the LED animation sequence
 int animationDelay = 0;     // animationDelay: is used in the animation Speed calculation. The greater the 
                             // animationDelay, the slower the LED sequence.
 
-//used by commetEffect & fireStarter
+// used by commetEffect & fireStarter
 int LEDSpeed=1;                   // stores the "speed" of the LED animation sequence
 int LEDPosition=int(NUM_LEDS/2);  // identifies the LED within the strip to modify (leading LED). 
                                   // The number will be between 0 & NUM_LEDS-1
 byte bright = 80;                 // used to modify the brightness of the trailing LEDs
 
-//used by fireStarter
+// used by fireStarter
 byte ledb[NUM_LEDS];
 byte ledh[NUM_LEDS];
 
@@ -107,7 +111,7 @@ void setup(){
     CircuitPlayground.begin(); //for the built in accelerometer, onboard LEDs etc  
     delay(2000);               //Delay for two seconds to power the LEDS before starting the data signal
     FastLED.addLeds<WS2812B, LED_PIN, GRB>(leds, NUM_LEDS);    //initialise the LED strip
-    FastLED.setBrightness(intensity);
+    FastLED.setBrightness(brightness);
     FastLED.clear();      //So we know where we are at 
     FastLED.show();
     //used by the fire_effect() function, sets a (bulit in) palette for the function to use
@@ -311,6 +315,10 @@ void demoReel()
   // Call the current pattern function once, updating the 'leds' array
   gPatterns[gCurrentPatternNumber]();
 
+  // Set the brightness of the LEDs
+  brightness = map(analogRead(POT_PIN), 0, 1023, 0, 200); 
+  FastLED.setBrightness(brightness);
+
   // send the 'leds' array out to the actual LED strip
   FastLED.show();  
   // insert a delay to keep the framerate modest
@@ -461,7 +469,7 @@ void pot_bpm()
 void display_rainbow(){
   int glitter_led;
  
-  FastLED.setBrightness (intensity/2);
+  FastLED.setBrightness (brightness/2);
   fill_rainbow(leds, NUM_LEDS, 0, 255/NUM_LEDS);
  
   if( random8() < NUM_LEDS/2) {
@@ -524,8 +532,8 @@ void VU_meter(){
  
   inputCeiling = map(analogRead(POT_PIN), 0, 1023, 120, 80);
   
-  //Tried to set the inputFloor by InputCeiling, didn't seem to work 
-  //inputFloor = inputCeiling - 15;
+  // Tried to set the inputFloor by InputCeiling, didn't seem to work 
+  // inputFloor = inputCeiling - 15;
   
   float peakToPeak = 0;   // peak-to-peak level
   unsigned int c, y;
@@ -735,7 +743,7 @@ void comet_effect(){
 
       //Serial.println(potVal);
       
-      showLED(LEDPosition, potVal, 255, intensity);       // Hue set via potentiometer.
+      showLED(LEDPosition, potVal, 255, brightness);       // Hue set via potentiometer.
 
       //The following lines create the comet effect
       bright = random(50, 100);                           // Randomly select a brightness between 50 and 100
@@ -759,7 +767,7 @@ void fire_starter(){
       byte potVal = map(analogRead(POT_PIN), 0, 1023, 0, 255);
       
       ledh[LEDPosition] = potVal;                      // Hue set by potentiometer
-      showLED(LEDPosition, ledh[LEDPosition], 255, intensity);
+      showLED(LEDPosition, ledh[LEDPosition], 255, brightness);
 
       //The following lines create the fire starter effect
       bright = random(50, 100);                       // Randomly select a brightness between 50 and 100
