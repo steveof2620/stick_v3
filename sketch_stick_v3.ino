@@ -1,14 +1,20 @@
 /*
 Hardware:
-  Circuit Playground Express Bluefruit
+  For Circuit Playground Express Bluefruit:
     (uses internal accelerometer, microphone, buttons A & B, slide switch and onboard neoPixels)
-  1 x Potentiometer (Pin A1, Ground, 3.3v)
-  1 x 30 LED WS2812B strip (Pin A3 (17), Ground, VOUT)
+    1 x Potentiometer (Pin A1, Ground, 3.3v)
+    1 x 30 LED WS2812B strip (Pin A3 (17), Ground, VOUT)
+
+  For Circuit Playground Express:
+    (uses internal accelerometer, microphone, buttons A & B, slide switch and onboard neoPixels)
+    1 x Potentiometer (Pin A3, Ground, 3.3v)
+    1 x 30 LED WS2812B strip (Pin A1, Ground, VOUT)
+  
 */
 
 // libraries used
-#include "FastLED.h"
 #include <Adafruit_CircuitPlayground.h>
+#include "FastLED.h"
 
 //====================================================================================================================
 // Global Definitions
@@ -24,7 +30,8 @@ Hardware:
 // The total number of LEDs being used
 #define NUM_LEDS 30
 
-// NeoPixel strip connected to A3 (Seems to only work when set to 17)
+/* For CPX Bluefruit, NeoPixel strip connected to A3 (Seems to only work when set to 17)
+*/ For CPX NeoPixel strip connected to A1
 #define LED_PIN 17
 
 // Definitations for the VU_meter() function
@@ -41,8 +48,9 @@ Hardware:
                            // Higher chance = more roaring fire.  Lower chance = more flickery fire.
                            // Default 120, suggested range 50-200.
 
-// For the potentiometer
-#define POT_PIN  A1        //Otherwise known as pin 6
+/* For CPX Bluefruit, potentiometer connected to A1 (PIN 6)
+*/ For CPX, potentiometer connected to A3  
+#define POT_PIN  A1
 
 // Initialise the LED array.
 CRGB leds[NUM_LEDS];
