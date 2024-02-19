@@ -555,7 +555,6 @@ void pot_bpm()
   EVERY_N_MILLISECONDS( 20 ) { gHue++; } // slowly cycle the "base color" through the rainbow
 }
 
-
 //====================================================================================================================
 // void display_rainbow () : The beginning of the sequence. A rainbow is displayed with a glitter effect and the the 
 //                           rainbow_cylon running underneath.
@@ -880,14 +879,28 @@ void adjustSpeed(){
   // Take a reading from the Y Pin of the accelerometer and adjust the value so that positive numbers move in one
   // direction, and negative numbers move in the opposite diraction. map function used to convert accelerometer
   // readings, constrain function to ensure it stays within the desired limits
-  // values of -2.5 and -7 determined by trial and error.
+  // values below determined by trial and error.
  
-  // added circuit playground Y
-  X = CircuitPlayground.motionX();
-  LEDAccel = constrain(map(X, -2.5, -7 , maxLEDSpeed, -maxLEDSpeed),-maxLEDSpeed, maxLEDSpeed);
+  // Obtaining accelerometer values
+  
+  // X Axis, movement on the buttons plane
+  // X = CircuitPlayground.motionX();
+  // LEDAccel = constrain(map(X, 7, 14 , maxLEDSpeed, -maxLEDSpeed),-maxLEDSpeed, maxLEDSpeed);
+  
+  // Y Axis, movement on the USB / Power socket plane
+  Y = CircuitPlayground.motionY();
+  LEDAccel = constrain(map(Y, -15, 10 , maxLEDSpeed, -maxLEDSpeed),-maxLEDSpeed, maxLEDSpeed);
 
-  //delay(500);
-  //Serial.println(X);
+  // Z Axis, movement on the vetical plane (through the sensor)
+  // Z = CircuitPlayground.motionZ();
+  // LEDAccel = constrain(map(Z, -6, 3 , maxLEDSpeed, -maxLEDSpeed),-maxLEDSpeed, maxLEDSpeed);
+  
+  /*
+  Serial.print("the Y value is:");
+  Serial.print(Y);
+  Serial.print(" => LEDAccel: ");
+  Serial.println(LEDAccel);
+  */
   
   // The Speed of the LED animation sequence can increase (accelerate), decrease (decelerate)
   LEDSpeed = LEDSpeed + LEDAccel;
@@ -908,7 +921,6 @@ void adjustSpeed(){
     }                                      // in the negative direction            
   }
 }
-
 //===================================================================================================================
 // constrainLEDs() : called by commetEffect & fireStarter. Ensures that the LED animation sequence remains within
 //                   boundaries of the various arrays (and the LED strip) and it also creates a "bouncing" effect
