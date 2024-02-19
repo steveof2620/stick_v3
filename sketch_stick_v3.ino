@@ -9,7 +9,6 @@ Hardware:
     (uses internal accelerometer, microphone, buttons A & B, slide switch and onboard neoPixels)
     1 x Potentiometer (Pin A3, Ground, 3.3v)
     1 x 30 LED WS2812B strip (Pin A1, Ground, VOUT)
-  
 */
 
 // libraries used
@@ -31,7 +30,8 @@ Hardware:
 #define NUM_LEDS 30
 
 /* For CPX Bluefruit, NeoPixel strip connected to A3 (Seems to only work when set to 17)
-*/ For CPX NeoPixel strip connected to A1
+   For CPX NeoPixel strip connected to A1
+*/
 #define LED_PIN 17
 
 // Definitations for the VU_meter() function
@@ -49,7 +49,8 @@ Hardware:
                            // Default 120, suggested range 50-200.
 
 /* For CPX Bluefruit, potentiometer connected to A1 (PIN 6)
-*/ For CPX, potentiometer connected to A3  
+   For CPX, potentiometer connected to A3  
+*/
 #define POT_PIN  A1
 
 // Initialise the LED array.
