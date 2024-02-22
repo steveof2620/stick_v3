@@ -613,17 +613,20 @@ void rainbow_cylon(){
 //              Derived from the VU_Meter() contained within CPX examples.
 //====================================================================================================================
 void VU_meter(){
-
-  //println(mode);
   
-  int inputCeiling = 90;    // Upper range of mic sensitivity in db SPL -> original setting 110
+  int inputCeiling = 120;    // Upper range of mic sensitivity in db SPL -> original setting 110
                             // lower the setting the higher the range 
-  int inputFloor = 70;      // Lower range of mic sensitivity in dB SPL -> original setting 56
+  int inputFloor = 65;      // Lower range of mic sensitivity in dB SPL -> original setting 56
                             // 62 seems the setting to cancel out background noise 
  
   float mapf(float x, float in_min, float in_max, float out_min, float out_max);
  
-  inputCeiling = map(analogRead(POT_PIN), 0, 1023, 120, 80);
+  inputCeiling = map(analogRead(POT_PIN), 0, 1023, 70, 150);
+
+  /*
+  Serial.print("input ceiling: ");
+  Serial.println(inputCeiling);
+  */
   
   // Tried to set the inputFloor by InputCeiling, didn't seem to work 
   // inputFloor = inputCeiling - 15;
@@ -921,6 +924,7 @@ void adjustSpeed(){
     }                                      // in the negative direction            
   }
 }
+
 //===================================================================================================================
 // constrainLEDs() : called by commetEffect & fireStarter. Ensures that the LED animation sequence remains within
 //                   boundaries of the various arrays (and the LED strip) and it also creates a "bouncing" effect
