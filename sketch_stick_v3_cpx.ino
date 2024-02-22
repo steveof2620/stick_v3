@@ -1,5 +1,5 @@
 /*
-***** Note: use sketch_stick_v3 instead ***** 
+***** Note: For testing with the CPX only. Use sketch_stick_v3 instead ***** 
 
 Hardware:
   For Circuit Playground Express Bluefruit:
