@@ -1,4 +1,6 @@
 /*
+***** Note: use sketch_stick_v3 instead ***** 
+
 Hardware:
   For Circuit Playground Express Bluefruit:
     (uses internal accelerometer, microphone, buttons A & B, slide switch and onboard neoPixels)
