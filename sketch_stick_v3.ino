@@ -11,9 +11,9 @@ Hardware:
     1 x 30 LED WS2812B strip (Pin A1, Ground, VOUT)
 */
 
-// libraries used
-#include <Adafruit_CircuitPlayground.h>
+// Libraries used, FastLED first to avoid 'uint32_t' compile error
 #include "FastLED.h"
+#include <Adafruit_CircuitPlayground.h>
 
 //====================================================================================================================
 // Global Definitions
